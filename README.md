@@ -33,6 +33,6 @@ Please don't use the code in your version of submission, it's **code plagiarism*
 请勿在你提交的版本中使用本仓库的代码，这属于代码**剽窃**，而且华为在复查时会因为相同的代码而判定我们**失去资格**。
 
 # Wechat Reward 微信打赏
-If you find this tool helpful, please consider buy me a cup of coffee.
-如果你觉得该工具有用，可以考虑打赏一杯咖啡。
-![打赏](img/reward.jpg)
+If you find this tool helpful, please consider buy me a cup of coffee.   
+如果你觉得该工具有用，可以考虑打赏一杯咖啡。   
+![打赏](img/reward.jpg)   
