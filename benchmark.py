@@ -7,9 +7,9 @@ from subprocess import getoutput
 from typing import Tuple, List
 from abc import ABC, abstractmethod
 import numpy as np
-# import mpld3
-# import matplotlib.pyplot as plt
-# from mpld3._server import serve as mpld3_server
+import mpld3
+import matplotlib.pyplot as plt
+from mpld3._server import serve as mpld3_server
 
 
 cname, sname, qos, qos_lim = None, None, None, None
@@ -85,7 +85,7 @@ class ServerSeriesPlot(Plot):  # x: time  y: many client bandwidth height. P.S. 
 
     def plot(self, s_idx):
         idx = np.argsort(self.y_accu)
-        sep_idx = int(len(idx) * 0.8)
+        sep_idx = int(len(idx) * 0.9)
         end_idx = int(math.ceil(len(idx) * 0.95)) 
         time_str = self.time[idx].tolist()
         time_str = [ str(i) for i in time_str]
@@ -393,21 +393,21 @@ class OutputAnalyser():
 
     def output_result(self):
         self.calc_score()
-        # score_msg = f'<p>score: {self.score1}</p>'
-        # inp = input('generate plot through webpage? y/[n] (default is n):')
-        # if inp.strip().lower() == 'n' or inp.strip() == '':
-        #     return
-        # elif inp.strip().lower() == 'y':
-        #     try: self.empty_analyse()
-        #     except:
-        #         print('your t length is too small to analyze and plot.')
-        #         exit(1)
-        #     self.plot_manager = PlotManager()
-        #     self._analyse_server_history_and_plot()
-        #     self.plot_manager.show_webpage(score_msg)
-        #     return 
-        # else:
-        #     print('input error, will not plot figure')
+        score_msg = f'<p>score: {self.score1}</p>'
+        inp = input('generate plot through webpage? y/[n] (default is n):')
+        if inp.strip().lower() == 'n' or inp.strip() == '':
+            return
+        elif inp.strip().lower() == 'y':
+            try: self.empty_analyse()
+            except:
+                print('your t length is too small to analyze and plot.')
+                exit(1)
+            self.plot_manager = PlotManager()
+            self._analyse_server_history_and_plot()
+            self.plot_manager.show_webpage(score_msg)
+            return 
+        else:
+            print('input error, will not plot figure')
 
 
     def dispatch_server(self, c_idx: int, s_idx: int, stream_ids: List[str]):
@@ -471,7 +471,7 @@ class OutputAnalyser():
             ids = dispatchs[1:]
             res = self._process_server_res(c_idx, s, ids, line)
             if int(res) != client_demand_at_t:
-                err_print(f'bandwidth of {cname[c_idx]} is not satisfied', line)
+                err_print(f'bandwidth of {cname[c_idx]} is not satisfied \t time_label: {time_label[self.curr_time_step]} index: {self.curr_time_step}', line)
             self._check_time_step_finished()
             return
         res_accum = 0
@@ -482,7 +482,7 @@ class OutputAnalyser():
             res = self._process_server_res(c_idx, s, ids, line)
             res_accum += int(res)
         if res_accum != client_demand_at_t:
-            err_print(f'bandwidth accumulation of {cname[c_idx]} is not satisfied', line)
+            err_print(f'bandwidth accumulation of {cname[c_idx]} is not satisfied \t time_label: {time_label[self.curr_time_step]} index: {self.curr_time_step}', line)
         self._check_time_step_finished()
     
     def _process_server_res(self, c_idx: int, server_name: str, stream_ids: List[str], line: str):
