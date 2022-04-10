@@ -504,7 +504,9 @@ class OutputAnalyser():
     def read_file(self, output_file_name: str):
         with open(output_file_name) as f:
             lines = f.read().splitlines()
-        for l_idx, l in enumerate(lines):
+        can_90_s_list = lines[0].strip().split(',')
+        self.can_90_s_list = [ sname_map[i] for i in can_90_s_list ]
+        for l_idx, l in enumerate(lines[1:]):
             self._curr_read_line = l
             self._curr_line_idx = l_idx
             self.read_one_line(l)
@@ -515,12 +517,22 @@ class OutputAnalyser():
         if self.count not in [0, self.max]:
             err_print('output is not complete in the last time step')
         time_cnt = len(time_label)
-        idx = math.ceil(time_cnt * 0.95) - 1
+        # idx = math.ceil(time_cnt * 0.95) - 1
+        idx_95 = math.ceil(time_cnt * 0.95) - 1
+        idx_90 = math.ceil(time_cnt * 0.9) - 1
+        idx = []
+        for i in range(len(sname)):
+            if i in self.can_90_s_list:
+                idx.append(idx_90)
+            else:
+                idx.append(idx_95)
         server_history = np.array(self.server_history_bandwidth)  # t * s
         sum_all_time = server_history.sum(axis=0)  # s
         out = []
         server_history.sort(axis=0)
-        score_95 = server_history[idx] # s
+        score_95_old = server_history[idx_95] # s
+        score_95 = server_history[idx, list(range(len(sname)))]
+        # print('cost diff: \n', score_95_old - score_95)
         for s_idx, sum in enumerate(sum_all_time):
             if sum == 0:
                 out.append(0)
